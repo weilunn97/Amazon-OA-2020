@@ -6,22 +6,24 @@ def longest_vowel_string(s: str) -> int:
     Time  : O()
     Space : O(), where N = len(s)
     """
-    # LET DP[I] = LONGEST VOWEL STRING ENDING AT S[I], INCLUSIVE
-    vowels = set("aeiou")
-    dp = deque([0] * len(s))
-    dp[0] = int(s[0] in vowels)
+    s = deque(list(s))
+    vowels = {'a', 'e', 'i', 'o', 'u'}
+    count = 0
 
-    for i in range(1, len(dp)):
-        dp[i] = 0 if s[i] not in vowels else dp[i - 1] + 1
+    # POP FRONT AND BACK
+    while s and s[0] in vowels: count += int(bool(s.popleft()))
+    while s and s[-1] in vowels: count += int(bool(s.pop()))
 
-    # ADD ANY STARTING AND ENDING VOWEL STRINGS TO OUR COUNT
-    start, end = 0, 0
-    while dp and dp[0] > 0: start = dp.popleft()
-    while dp and dp[-1] > 0: end = max(end, dp.pop())
-
-    # FIND THE LONGEST STRING IN THE MIDDLE
-    count = max(dp) if dp else 0
-    return start + count + end
+    # GET THE LARGEST CONSECUTIVE VOWEL COUNT
+    longest = 0
+    length = 0
+    for char in s:
+        if char in vowels:
+            length += 1
+        else:
+            longest = max(longest, length)
+            length = 0
+    return count + longest
 
 
 if __name__ == "__main__":
